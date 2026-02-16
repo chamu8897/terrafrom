@@ -5,6 +5,7 @@ on:
     branches:
       - main
   pull_request:
+  workflow_dispatch:   # allows manual trigger
 
 jobs:
   terraform:
@@ -36,6 +37,35 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -var-file=terraform.tfvars
 
-      - name: Terraform Apply
+      - name: Terraform Apply (Approval Required)
         if: github.ref == 'refs/heads/main'
+        environment: apply   # requires approval for apply in ALL envs
         run: terraform apply -auto-approve -var-file=terraform.tfvars
+
+  terraform-destroy:
+    runs-on: ubuntu-latest
+    needs: terraform   # run only after terraform job completes
+    environment: destroy   # requires approval for destroy in ALL envs
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::111225938018:role/github-odic-chamu
+          aws-region: us-east-1
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Destroy (Approval Required)
+        run: terraform destroy -var-file=terraform.tfvars

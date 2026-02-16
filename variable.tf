@@ -1,14 +1,29 @@
 variable "aws_region" {
-  description = "AWS region to deploy resources"
+  description = "AWS region"
+  type        = string
+}
+
+variable "project_name" {
+  description = "Project name prefix"
   type        = string
 }
 
 variable "vpc_cidr" {
-  description = "CIDR block for the VPC"
+  description = "CIDR block for VPC"
   type        = string
 }
 
-variable "vpc_name" {
-  description = "Name tag for the VPC"
+variable "public_subnet_cidr" {
+  description = "CIDR block for public subnet"
+  type        = string
+}
+
+variable "private_subnet_cidr" {
+  description = "CIDR block for private subnet"
+  type        = string
+}
+
+variable "az" {
+  description = "Availability Zone"
   type        = string
 }
