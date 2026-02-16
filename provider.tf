@@ -3,7 +3,7 @@ terraform {
     bucket         = "chamu-terraform-state"
     key            = "vpc/terraform.tfstate"
     region         = "eu-west-1"
-    dynamodb_table = "terraform-locks"   # <-- add this
+    dynamodb_table = "terraform-locks"   # <-- ensures safe state locking
     encrypt        = true
   }
 }
