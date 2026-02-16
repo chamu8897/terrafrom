@@ -5,15 +5,15 @@ on:
     branches:
       - main
   pull_request:
-  workflow_dispatch:   # allows manual trigger
+  workflow_dispatch:
 
 jobs:
   terraform:
     runs-on: ubuntu-latest
-    environment: apply   # <-- environment must be at job level
+    # environment: apply   # remove or leave with no reviewers
 
     permissions:
-      id-token: write   # Required for OIDC
+      id-token: write
       contents: read
 
     steps:
@@ -45,7 +45,7 @@ jobs:
   terraform-destroy:
     runs-on: ubuntu-latest
     needs: terraform
-    environment: destroy   # <-- environment at job level
+    # environment: destroy   # remove or leave with no reviewers
 
     permissions:
       id-token: write
@@ -67,5 +67,8 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
+      - name: Terraform Destroy Plan
+        run: terraform plan -destroy -var-file=terraform.tfvars
+
       - name: Terraform Destroy
-        run: terraform destroy -var-file=terraform.tfvars
+        run: terraform destroy -auto-approve -var-file=terraform.tfvars
